@@ -3,7 +3,6 @@ import { StatusCode } from './../../common/error-status';
 import {
   Get,
   Post,
-  Res,
   Req,
   Body,
   Query,
