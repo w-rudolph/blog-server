@@ -9,6 +9,7 @@ export class CategoryController {
     constructor(private catService: CategoryService) { }
 
     @Get('list')
+    @UseGuards(JwtAuthGuard)
     async actionList() {
         return await this.catService.getCategories();
     }
@@ -33,7 +34,7 @@ export class CategoryController {
             cat = await this.catService.getCategory({ id: catId });
         }
         if (!catId || !cat) {
-            if (this.catService.findCategoryByNameOrAlias(name, alias)) {
+            if (await this.catService.findCategoryByNameOrAlias(name, alias)) {
                 throw new HttpException(`分类名字或别名不能重复！`, StatusCode.FAIL);
             }
             cat = new Category();
