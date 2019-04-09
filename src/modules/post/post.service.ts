@@ -8,7 +8,7 @@ export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly postR: Repository<Post>,
-  ) {}
+  ) { }
 
   async getPostByField(
     field: FindConditions<Post>,
@@ -30,10 +30,31 @@ export class PostService {
 
   async getPosts(param: any = {}): Promise<[Post[], number]> {
     const { limit, offset, ...rest } = param;
-    return await this.postR.findAndCount({
-      ...rest,
-      take: limit,
-      skip: offset,
-    });
+    // return await this.postR.findAndCount({
+    //   ...rest,
+    //   take: limit,
+    //   skip: offset,
+    // });
+    const req = await this.postR.createQueryBuilder('post')
+      .where(rest)
+      .take(limit)
+      .offset(offset)
+      // .leftJoin('user', 'user', 'user.id = post.author')
+      // .leftJoin('category', 'cat', 'cat.id = post.category')
+    req.printSql();
+    return await req.getManyAndCount();
+  }
+
+  async getPostDetail(field: Partial<Post>) {
+    return await this.postR.createQueryBuilder('post')
+      .where(field)
+      .leftJoin('user', 'user', 'user.id = post.author')
+      .leftJoin('category', 'cat', 'cat.id = post.category')
+      .select([
+        'post.*',
+        'user.name as authorName',
+        'cat.name as categoryName',
+      ])
+      .getRawOne();
   }
 }

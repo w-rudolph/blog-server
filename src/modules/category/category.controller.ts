@@ -17,7 +17,8 @@ export class CategoryController {
     @Get('list-simple')
     async actionListSimple() {
         return await this.catService.getCategories({
-            select: ['id', 'name', 'alias'],
+            where: { status: CategoryStatus.DEFAULT },
+            select: ['id', 'name', 'alias', 'sort'],
         });
     }
 
@@ -27,8 +28,10 @@ export class CategoryController {
         @Body('catId') id: number,
         @Body('name') name: string,
         @Body('alias') alias: string,
+        @Body('sort') sort: number,
     ) {
-        const catId = Number(id) || undefined;
+        const catId = Number(id);
+        const sortId = Number(sort) || 100;
         let cat = null;
         if (catId) {
             cat = await this.catService.getCategory({ id: catId });
@@ -41,6 +44,7 @@ export class CategoryController {
         }
         cat.name = name;
         cat.alias = alias;
+        cat.sort = sortId;
         return await this.catService.saveCategory(cat);
     }
 

@@ -22,6 +22,9 @@ export class Category {
     @Column()
     alias: string;
 
+    @Column({ default: 100 })
+    sort: number;
+
     @Column({ default: CategoryStatus.DEFAULT })
     status: number;
 

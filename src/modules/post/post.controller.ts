@@ -21,19 +21,22 @@ export class PostController {
   constructor(
     private readonly userService: UserService,
     private readonly postService: PostService,
-  ) {}
+  ) { }
 
   @Get('list-simple')
   async actionListSimple(
+    @Query('catId') catId: number,
     @Query('offset') offset: number,
     @Query('limit') limit: number,
   ) {
     offset = Number(offset) || 0;
     limit = Number(limit) || 25;
+    catId = Number(catId);
+    const query: any = { limit, offset };
+    if (catId) query.category = catId;
     const [rows, total] = await this.postService.getPosts({
-      limit,
-      offset,
-      select: ['id', 'title', 'abstract', 'createAt', 'updateAt', 'author'],
+      ...query,
+      select: ['id', 'title', 'category', 'abstract', 'createAt', 'updateAt', 'author'],
     });
     return { rows, total };
   }
@@ -56,22 +59,23 @@ export class PostController {
   }
 
   @Get('detail')
-  async actionDetail(@Query('postId') id: number) {
-    if (!id) return {};
-    const post = await this.postService.getPost({ id });
+  @UseGuards(JwtAuthGuard)
+  async actionDetail(
+    @Req() req: any,
+    @Query('postId') id: number,
+  ) {
+    id = Number(id);
+    if (!id) {
+      throw new HttpException(`无效PostId！`, StatusCode.FAIL);
+    }
+    const post = await this.postService.getPostDetail({ id });
+    const currentUser = req.currentUser && req.currentUser.id;
     if (!post) {
       throw new HttpException(`Post不存在！`, StatusCode.FAIL);
+    } else if (post.author !== currentUser) {
+      throw new HttpException(`没有权限访问！`, StatusCode.FAIL);
     }
-    const user =
-      (await this.userService.getUser({ id: post.author })) || ({} as User);
-    return {
-      ...post,
-      author: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
-    };
+    return post;
   }
 
   @Post('save')
@@ -79,6 +83,7 @@ export class PostController {
   async actionSave(
     @Req() req: any,
     @Body('postId') id: number,
+    @Body('category') category: number,
     @Body('title') title: string,
     @Body('abstract') abstract: string,
     @Body('content') content: string,
@@ -87,7 +92,7 @@ export class PostController {
     const isNew = !Number(id);
     let post = new PostEntity();
     let error = '';
-    if (isEmpty([title, abstract, content])) {
+    if (isEmpty([title, abstract, content, category])) {
       error = '请输入完整的信息！';
     } else if (!checkLength(title, 5, 32)) {
       error = '标题长度应控制在5到32个字符之内';
@@ -106,6 +111,7 @@ export class PostController {
     }
     post.content = content;
     post.title = title;
+    post.category = category;
     post.abstract = abstract;
     post.preview = preview;
     let ret = null;

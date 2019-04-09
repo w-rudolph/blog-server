@@ -21,6 +21,9 @@ export class Post {
   title: string;
 
   @Column()
+  category: number;
+
+  @Column()
   abstract: string;
 
   @Column({ type: 'text' })
