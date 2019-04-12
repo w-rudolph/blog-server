@@ -14,16 +14,12 @@ import { AuthGuard as JwtAuthGuard } from './../auth/jwt-auth.guard';
 import { isEmpty, checkLength, checkMinLength } from '../../common/util/validator';
 import { Post as PostEntity, PostStatus } from './post.entity';
 import { PostService } from './post.service';
-import { UserService } from './../user/user.service';
 
 @Controller('admin/post')
 export class PostController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly postService: PostService,
-  ) { }
+  constructor(private readonly postService: PostService) { }
 
-  @Get('list-simple')
+  @Get('simple-list')
   async actionListSimple(
     @Query('catId') catId: number,
     @Query('offset') offset: number,
@@ -31,14 +27,23 @@ export class PostController {
   ) {
     offset = Number(offset) || 0;
     limit = Number(limit) || 25;
-    catId = Number(catId);
-    const query: any = { limit, offset };
+    const query: any = {
+      limit,
+      offset,
+    };
     if (catId) query.category = catId;
-    const [rows, total] = await this.postService.getPosts({
-      ...query,
-      select: ['id', 'title', 'category', 'abstract', 'createAt', 'updateAt', 'author'],
-    });
+    const [rows, total] = await this.postService.getPosts(query);
     return { rows, total };
+  }
+
+  @Get('simple-detail')
+  async actionDetailSimple(
+    @Query('postId') id: number,
+  ) {
+    if (!id) {
+      throw new HttpException(`无效PostId！`, StatusCode.FAIL);
+    }
+    return await this.postService.getPostDetail({ id });
   }
 
   @Get('list')

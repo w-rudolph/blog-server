@@ -28,21 +28,24 @@ export class PostService {
     return await this.postR.save(post);
   }
 
-  async getPosts(param: any = {}): Promise<[Post[], number]> {
-    const { limit, offset, ...rest } = param;
-    // return await this.postR.findAndCount({
-    //   ...rest,
-    //   take: limit,
-    //   skip: offset,
-    // });
+  async getPosts(params: any = {}): Promise<any> {
+    const { limit, offset, ...rest } = params;
     const req = await this.postR.createQueryBuilder('post')
+      .limit(limit)
+      .skip(offset)
       .where(rest)
-      .take(limit)
-      .offset(offset)
-      // .leftJoin('user', 'user', 'user.id = post.author')
-      // .leftJoin('category', 'cat', 'cat.id = post.category')
-    req.printSql();
-    return await req.getManyAndCount();
+      .leftJoin('user', 'u', 'u.id = post.author')
+      .leftJoin('category', 'c', 'c.id = post.category')
+      .select(
+        [
+          'post.*',
+          'u.name as authorName',
+          'u.email as authorEmail',
+          'c.name as categoryName',
+          'c.alias as categoryAlias',
+        ],
+      );
+    return [await req.getRawMany(), await req.getCount()];
   }
 
   async getPostDetail(field: Partial<Post>) {
