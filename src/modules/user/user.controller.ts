@@ -21,7 +21,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   @Get('list')
   @UseGuards(JwtAuthGuard)
@@ -36,9 +36,9 @@ export class UserController {
   }
 
   @Get('info')
-  @UseGuards(JwtAuthGuard)
   async actionInfo(@Req() req: any) {
-    return await this.userService.getUser({ id: req.currentUser && req.currentUser.id }) || {};
+    const user = this.authService.getUser(req, false);
+    return await this.userService.getUser({ id: user && user.id }) || {};
   }
 
   @Post('logout')

@@ -4,7 +4,7 @@ import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   async createToken(user: any): Promise<any> {
     const expiresIn = 24 * 60 * 60;
@@ -18,20 +18,34 @@ export class AuthService {
     };
   }
 
-  validateUser(token: string): any {
+  getUser(request: any, throwError = true) {
+    const token =
+      request.cookies.accesstoken ||
+      request.query.accesstoken ||
+      request.body.accesstoken ||
+      request.headers.accesstoken;
+    return this.validateUser(token, throwError);
+  }
+
+  validateUser(token: string, throwError: boolean): any {
     if (!token) {
-      throw new UnauthorizedException('未授权');
+      return this._handleError(throwError);
     }
-    let ret;
+    let ret: any;
     try {
       ret = jwt.verify(token, 'dXNlcm5hbWUrcGFzc3dvcmQ=') as any;
     } catch (err) {
-      throw new UnauthorizedException('未授权');
+      return this._handleError(throwError);
     }
     const { exp, user } = ret;
     if (Date.now() > exp * 1000 || !user) {
-      throw new UnauthorizedException('未授权');
+      return this._handleError(throwError);
     }
     return user;
+  }
+
+  private _handleError(throwError: boolean) {
+    if (throwError) throw new UnauthorizedException('未授权');
+    return {};
   }
 }

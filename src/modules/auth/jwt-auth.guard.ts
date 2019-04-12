@@ -7,12 +7,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    const token =
-      request.cookies.accesstoken ||
-      request.query.accesstoken ||
-      request.body.accesstoken ||
-      request.headers.accesstoken;
-    const user = this.authService.validateUser(token);
+    const user = this.authService.getUser(request);
     request.currentUser = user;
     return true;
   }

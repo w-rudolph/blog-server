@@ -27,6 +27,7 @@ export class PostController {
   ) {
     offset = Number(offset) || 0;
     limit = Number(limit) || 25;
+    catId = Number(catId);
     const query: any = {
       limit,
       offset,
