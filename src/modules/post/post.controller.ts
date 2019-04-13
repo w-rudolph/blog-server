@@ -128,6 +128,9 @@ export class PostController {
       post.author = req.currentUser.id;
       ret = await this.postService.insertPost(post);
     } else {
+      if (post.status === PostStatus.DELETED) {
+        post.status = PostStatus.DRAFT;
+      }
       ret = await this.postService.updatePost(post);
     }
     return this.postService.getPost({ id: post.id || ret.raw.insertId });
@@ -169,7 +172,7 @@ export class PostController {
         error = '没有权限！';
       }
     }
-    if (post.status !== PostStatus.DRAFT) {
+    if (post.status === PostStatus.DELETED) {
       error = '状态错误！';
     }
     if (error) {

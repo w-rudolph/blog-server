@@ -7,7 +7,8 @@ import {
 } from 'typeorm';
 
 export enum CategoryStatus {
-    DEFAULT = 0,
+    DRAFT = 0,
+    PUBLISHED = 1,
     DELETED = -1,
 }
 
@@ -25,7 +26,7 @@ export class Category {
     @Column({ default: 100 })
     sort: number;
 
-    @Column({ default: CategoryStatus.DEFAULT })
+    @Column({ default: CategoryStatus.DRAFT })
     status: number;
 
     @CreateDateColumn({ type: 'datetime' })

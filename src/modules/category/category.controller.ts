@@ -17,7 +17,7 @@ export class CategoryController {
     @Get('simple-list')
     async actionListSimple() {
         return await this.catService.getCategories({
-            where: { status: CategoryStatus.DEFAULT },
+            where: { status: CategoryStatus.PUBLISHED },
             select: ['id', 'name', 'alias', 'sort'],
         });
     }
@@ -32,7 +32,7 @@ export class CategoryController {
     ) {
         const catId = Number(id);
         const sortId = Number(sort) || 100;
-        let cat = null;
+        let cat: Category;
         if (catId) {
             cat = await this.catService.getCategory({ id: catId });
         }
@@ -41,6 +41,9 @@ export class CategoryController {
                 throw new HttpException(`分类名字或别名不能重复！`, StatusCode.FAIL);
             }
             cat = new Category();
+        }
+        if (cat.status === CategoryStatus.DELETED) {
+            cat.status = CategoryStatus.DRAFT;
         }
         cat.name = name;
         cat.alias = alias;
@@ -63,7 +66,10 @@ export class CategoryController {
         if (!catId || !cat) {
             throw new HttpException(`分类不存在！`, StatusCode.FAIL);
         }
-        if (status !== CategoryStatus.DEFAULT && status !== CategoryStatus.DELETED) {
+        if (
+            (cat.status !== CategoryStatus.DRAFT && status === CategoryStatus.PUBLISHED) ||
+            (cat.status === CategoryStatus.DELETED && status === CategoryStatus.DELETED)
+        ) {
             throw new HttpException(`状态不正确！`, StatusCode.FAIL);
         }
         cat.status = status;
