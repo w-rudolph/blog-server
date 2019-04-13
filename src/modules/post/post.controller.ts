@@ -31,8 +31,11 @@ export class PostController {
     const query: any = {
       limit,
       offset,
+      status: PostStatus.PUBLISHED,
     };
-    if (catId) query.category = catId;
+    if (catId) {
+      query.category = catId;
+    }
     const [rows, total] = await this.postService.getPosts(query);
     return { rows, total };
   }
@@ -149,9 +152,8 @@ export class PostController {
     if (error) {
       throw new HttpException(`操作失败[${error}]`, StatusCode.FAIL);
     }
-    const savePost = new PostEntity();
-    savePost.status = PostStatus.PUBLISHED;
-    return this.postService.updatePost(savePost);
+    post.status = PostStatus.PUBLISHED;
+    return this.postService.updatePost(post);
   }
 
   @Post('delete')
@@ -173,8 +175,7 @@ export class PostController {
     if (error) {
       throw new HttpException(`操作失败[${error}]`, StatusCode.FAIL);
     }
-    const savePost = new PostEntity();
-    savePost.status = PostStatus.DELETED;
-    return this.postService.updatePost(savePost);
+    post.status = PostStatus.DELETED;
+    return this.postService.updatePost(post);
   }
 }

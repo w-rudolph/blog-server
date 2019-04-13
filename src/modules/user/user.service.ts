@@ -8,18 +8,21 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userR: Repository<User>,
-  ) {}
+  ) { }
 
-  async getUserByField(
-    field: FindConditions<User>,
-    select?: (keyof User)[],
-  ): Promise<User> {
-    return await this.userR.findOne(field, {
-      select: select || ['id', 'name', 'email', 'sex', 'status'],
-    });
+  async getUserSimpleInfo(where: FindConditions<User>): Promise<User> {
+    return await this.userR.findOne(
+      where,
+      {
+        select: ['id', 'name', 'email', 'sex', 'status']
+      },
+    );
   }
-  async getUser(field: Partial<User>): Promise<User> {
-    return await this.getUserByField(field);
+
+  async getUserDetail(where: FindConditions<User>) {
+    const user = await this.userR.findOne(where);
+    delete user.password;
+    return user;
   }
 
   async insertUser(user: User) {

@@ -14,7 +14,7 @@ export class CategoryController {
         return await this.catService.getCategories();
     }
 
-    @Get('list-simple')
+    @Get('simple-list')
     async actionListSimple() {
         return await this.catService.getCategories({
             where: { status: CategoryStatus.DEFAULT },

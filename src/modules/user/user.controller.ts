@@ -38,7 +38,14 @@ export class UserController {
   @Get('info')
   async actionInfo(@Req() req: any) {
     const user = this.authService.getUser(req, false);
-    return await this.userService.getUser({ id: user && user.id }) || {};
+    return await this.userService.getUserSimpleInfo({ id: user && user.id }) || {};
+  }
+
+  @Get('detail')
+  @UseGuards(JwtAuthGuard)
+  async actiondetail(@Req() req: any) {
+    const user = this.authService.getUser(req, false);
+    return await this.userService.getUserDetail({ id: user && user.id }) || {};
   }
 
   @Post('logout')
@@ -60,9 +67,9 @@ export class UserController {
     if (error) {
       throw new HttpException(`字段验证失败[${error}]`, StatusCode.FAIL);
     }
-    let user = await this.userService.getUser({ name, password: md5(pwd) });
+    let user = await this.userService.getUserSimpleInfo({ name, password: md5(pwd) });
     if (!user) {
-      user = await this.userService.getUser({ email: name, password: md5(pwd) });
+      user = await this.userService.getUserSimpleInfo({ email: name, password: md5(pwd) });
     }
     if (!user) {
       throw new HttpException(`账号信息不正确！`, StatusCode.FAIL);
@@ -94,11 +101,11 @@ export class UserController {
       error = '密码长度最小2，最大32！';
     } else if (pwd !== rpwd) {
       error = '两次输入密码不一致！';
-    } else if (await this.userService.getUser({ name })) {
+    } else if (await this.userService.getUserSimpleInfo({ name })) {
       error = '用户名已存在！';
     } else if (!checkFormat('email', email)) {
       error = '邮箱格式不正确！';
-    } else if (await this.userService.getUser({ email })) {
+    } else if (await this.userService.getUserSimpleInfo({ email })) {
       error = '邮箱已注册！';
     }
 
@@ -112,6 +119,6 @@ export class UserController {
     user.email = email;
     user.password = md5(pwd);
     const ret = await this.userService.insertUser(user);
-    return await this.userService.getUser({ id: ret.raw.insertId });
+    return await this.userService.getUserSimpleInfo({ id: ret.raw.insertId });
   }
 }
