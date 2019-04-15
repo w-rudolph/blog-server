@@ -11,13 +11,17 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { AuthGuard as JwtAuthGuard } from './../auth/jwt-auth.guard';
-import { isEmpty, checkLength, checkMinLength } from '../../common/util/validator';
+import {
+  isEmpty,
+  checkLength,
+  checkMinLength,
+} from '../../common/util/validator';
 import { Post as PostEntity, PostStatus } from './post.entity';
 import { PostService } from './post.service';
 
 @Controller('admin/post')
 export class PostController {
-  constructor(private readonly postService: PostService) { }
+  constructor(private readonly postService: PostService) {}
 
   @Get('simple-list')
   async actionListSimple(
@@ -41,9 +45,7 @@ export class PostController {
   }
 
   @Get('simple-detail')
-  async actionDetailSimple(
-    @Query('postId') id: number,
-  ) {
+  async actionDetailSimple(@Query('postId') id: number) {
     if (!id) {
       throw new HttpException(`无效PostId！`, StatusCode.FAIL);
     }
@@ -69,10 +71,7 @@ export class PostController {
 
   @Get('detail')
   @UseGuards(JwtAuthGuard)
-  async actionDetail(
-    @Req() req: any,
-    @Query('postId') id: number,
-  ) {
+  async actionDetail(@Req() req: any, @Query('postId') id: number) {
     id = Number(id);
     if (!id) {
       throw new HttpException(`无效PostId！`, StatusCode.FAIL);

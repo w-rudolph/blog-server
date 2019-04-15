@@ -36,6 +36,7 @@ export class PostService {
       .where(rest)
       .leftJoin('user', 'u', 'u.id = post.author')
       .leftJoin('category', 'c', 'c.id = post.category')
+      .orderBy('post.id', 'DESC')
       .select(
         [
           'post.*',

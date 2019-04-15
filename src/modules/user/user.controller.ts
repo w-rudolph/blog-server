@@ -21,7 +21,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
-  ) { }
+  ) {}
 
   @Get('list')
   @UseGuards(JwtAuthGuard)
@@ -38,14 +38,18 @@ export class UserController {
   @Get('info')
   async actionInfo(@Req() req: any) {
     const user = this.authService.getUser(req, false);
-    return await this.userService.getUserSimpleInfo({ id: user && user.id }) || {};
+    return (
+      (await this.userService.getUserSimpleInfo({ id: user && user.id })) || {}
+    );
   }
 
   @Get('detail')
   @UseGuards(JwtAuthGuard)
   async actiondetail(@Req() req: any) {
     const user = this.authService.getUser(req, false);
-    return await this.userService.getUserDetail({ id: user && user.id }) || {};
+    return (
+      (await this.userService.getUserDetail({ id: user && user.id })) || {}
+    );
   }
 
   @Post('logout')
@@ -67,9 +71,15 @@ export class UserController {
     if (error) {
       throw new HttpException(`字段验证失败[${error}]`, StatusCode.FAIL);
     }
-    let user = await this.userService.getUserSimpleInfo({ name, password: md5(pwd) });
+    let user = await this.userService.getUserSimpleInfo({
+      name,
+      password: md5(pwd),
+    });
     if (!user) {
-      user = await this.userService.getUserSimpleInfo({ email: name, password: md5(pwd) });
+      user = await this.userService.getUserSimpleInfo({
+        email: name,
+        password: md5(pwd),
+      });
     }
     if (!user) {
       throw new HttpException(`账号信息不正确！`, StatusCode.FAIL);

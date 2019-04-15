@@ -8,15 +8,12 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userR: Repository<User>,
-  ) { }
+  ) {}
 
   async getUserSimpleInfo(where: FindConditions<User>): Promise<User> {
-    return await this.userR.findOne(
-      where,
-      {
-        select: ['id', 'name', 'email', 'sex', 'status']
-      },
-    );
+    return await this.userR.findOne(where, {
+      select: ['id', 'name', 'email', 'sex', 'status'],
+    });
   }
 
   async getUserDetail(where: FindConditions<User>) {

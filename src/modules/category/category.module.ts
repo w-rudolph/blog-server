@@ -8,8 +8,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Category]), AuthModule],
-    providers: [UserService, AuthService, CategoryService],
-    controllers: [CategoryController],
+  imports: [TypeOrmModule.forFeature([Category]), AuthModule],
+  providers: [UserService, AuthService, CategoryService],
+  controllers: [CategoryController],
 })
-export class CategoryModule { }
+export class CategoryModule {}

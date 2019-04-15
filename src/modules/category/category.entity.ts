@@ -1,37 +1,37 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum CategoryStatus {
-    DRAFT = 0,
-    PUBLISHED = 1,
-    DELETED = -1,
+  DRAFT = 0,
+  PUBLISHED = 1,
+  DELETED = -1,
 }
 
 @Entity()
 export class Category {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    alias: string;
+  @Column()
+  alias: string;
 
-    @Column({ default: 100 })
-    sort: number;
+  @Column({ default: 100 })
+  sort: number;
 
-    @Column({ default: CategoryStatus.DRAFT })
-    status: number;
+  @Column({ default: CategoryStatus.DRAFT })
+  status: number;
 
-    @CreateDateColumn({ type: 'datetime' })
-    createAt: string;
+  @CreateDateColumn({ type: 'datetime' })
+  createAt: string;
 
-    @UpdateDateColumn({ type: 'datetime' })
-    updateAt: string;
+  @UpdateDateColumn({ type: 'datetime' })
+  updateAt: string;
 }
