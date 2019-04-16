@@ -18,11 +18,13 @@ export class CategoryService {
     return await this.catRep.save(cat);
   }
 
-  async findCategoryByNameOrAlias(name: string, alias: string) {
+  async checkCategoryNameOrAliasValid(id: number, name: string, alias: string) {
+    const query = id
+      ? 'category.id <> :id and category.name = :name or category.id <> :id and category.alias = :alias'
+      : 'category.name = :name or category.alias = :alias';
     return this.catRep
       .createQueryBuilder('category')
-      .where('category.name = :name', { name })
-      .orWhere('category.alias = :alias', { alias })
+      .where(query, { id, name, alias })
       .getOne();
   }
 

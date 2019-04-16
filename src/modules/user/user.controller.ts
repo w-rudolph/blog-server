@@ -105,10 +105,8 @@ export class UserController {
     let error = '';
     if (!name || !pwd || !rpwd || !email) {
       error = '请输入完整的账号信息！';
-    } else if (name.length < 2 || name.length > 32) {
-      error = '用户名长度最小2，最大32！';
-    } else if (pwd.length < 2 || pwd.length > 32) {
-      error = '密码长度最小2，最大32！';
+    } else if (name.length < 2 || name.length > 12) {
+      error = '用户名长度最小2，最大12！';
     } else if (pwd !== rpwd) {
       error = '两次输入密码不一致！';
     } else if (await this.userService.getUserSimpleInfo({ name })) {

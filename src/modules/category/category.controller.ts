@@ -46,11 +46,16 @@ export class CategoryController {
     if (catId) {
       cat = await this.catService.getCategory({ id: catId });
     }
-    if (!catId || !cat) {
-      if (await this.catService.findCategoryByNameOrAlias(name, alias)) {
-        throw new HttpException(`分类名字或别名不能重复！`, StatusCode.FAIL);
-      }
+    if (!cat || !catId) {
       cat = new Category();
+    }
+    const fdCat = await this.catService.checkCategoryNameOrAliasValid(
+      catId,
+      name,
+      alias,
+    );
+    if (fdCat) {
+      throw new HttpException(`分类名字或别名不能重复！`, StatusCode.FAIL);
     }
     if (cat.status === CategoryStatus.DELETED) {
       cat.status = CategoryStatus.DRAFT;
