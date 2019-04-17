@@ -17,7 +17,7 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
       password: '',
       database: 'blog',
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
     }),
     UserModule,
     PostModule,

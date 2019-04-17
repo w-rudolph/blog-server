@@ -23,7 +23,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 32 })
+  @Column()
   name: string;
 
   @Column()
@@ -41,9 +41,9 @@ export class User {
   @Column({ default: AccountStatus.BLOCKED, type: 'int' })
   status: AccountStatus;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updateAt: string;
 }

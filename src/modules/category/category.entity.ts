@@ -29,9 +29,9 @@ export class Category {
   @Column({ default: CategoryStatus.DRAFT })
   status: number;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updateAt: string;
 }

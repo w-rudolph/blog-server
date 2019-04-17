@@ -38,9 +38,9 @@ export class Post {
   @Column({ default: PostStatus.DRAFT })
   status: PostStatus;
 
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updateAt: string;
 }
