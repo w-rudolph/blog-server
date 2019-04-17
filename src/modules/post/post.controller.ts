@@ -104,8 +104,8 @@ export class PostController {
       error = '请输入完整的信息！';
     } else if (!checkLength(title, 5, 32)) {
       error = '标题长度应控制在5到32个字符之内';
-    } else if (!checkLength(abstract, 20, 100)) {
-      error = '摘要长度应控制在20到100个字符之内';
+    } else if (!checkLength(abstract, 15, 100)) {
+      error = '摘要长度应控制在15到100个字符之内';
     } else if (!checkMinLength(content, 50)) {
       error = '正文长度至少50个字符';
     } else if (!isNew) {
