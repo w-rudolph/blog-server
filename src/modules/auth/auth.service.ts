@@ -1,10 +1,9 @@
 import * as jwt from 'jsonwebtoken';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor() {}
 
   async createToken(user: any): Promise<any> {
     const expiresIn = 24 * 60 * 60;

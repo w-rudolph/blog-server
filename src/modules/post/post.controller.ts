@@ -1,4 +1,3 @@
-import { User } from './../user/user.entity';
 import { StatusCode } from './../../common/error-status';
 import {
   Get,
