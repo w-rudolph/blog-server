@@ -34,4 +34,19 @@ export class UserService {
       skip: offset,
     });
   }
+
+  async getUser(where: FindConditions<User>) {
+    return await this.userR.findOne(where);
+  }
+
+  async saveUser(user: User) {
+    return await this.userR.save(user);
+  }
+
+  async checkUserEmailValid(email: string, userId: number) {
+    return await this.userR
+      .createQueryBuilder('user')
+      .where(`user.email = :email and user.id <> :id`, { email, id: userId })
+      .getOne();
+  }
 }

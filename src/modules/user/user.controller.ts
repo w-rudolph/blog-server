@@ -129,4 +129,57 @@ export class UserController {
     const ret = await this.userService.insertUser(user);
     return await this.userService.getUserSimpleInfo({ id: ret.raw.insertId });
   }
+
+  @Post('save')
+  @UseGuards(JwtAuthGuard)
+  async actionSave(
+    @Req() req: any,
+    @Body('email') email: string,
+    @Body('sex') sex: number,
+  ) {
+    sex = Number(sex);
+    if (!checkFormat('email', email)) {
+      throw new HttpException(`邮箱不正确`, StatusCode.FAIL);
+    }
+    if (Sex[sex] === undefined) {
+      throw new HttpException(`性别值不正确`, StatusCode.FAIL);
+    }
+    const userId = req.currentUser.id;
+    const fdUser = await this.userService.checkUserEmailValid(email, userId);
+    if (fdUser) {
+      throw new HttpException(`邮箱已被注册`, StatusCode.FAIL);
+    }
+
+    const user = await this.userService.getUser({ id: userId });
+    user.email = email;
+    user.sex = sex;
+    await this.userService.saveUser(user);
+    return {};
+  }
+
+  @Post('update-password')
+  @UseGuards(JwtAuthGuard)
+  async actionUpdatePassword(
+    @Req() req: any,
+    @Body('oldpassword') oldpassword: string,
+    @Body('password') password: string,
+    @Body('repassword') repassword: string,
+  ) {
+    let errMsg = '';
+    if (!oldpassword || !password || !repassword) {
+      errMsg = '请输入完整信息';
+    } else if (password !== repassword) {
+      errMsg = '两次输入密码不一致';
+      throw new HttpException(`两次输入密码不一致`, StatusCode.FAIL);
+    } else if (password === oldpassword) {
+      errMsg = '新旧密码不能相同';
+    }
+    if (errMsg) {
+      throw new HttpException(errMsg, StatusCode.FAIL);
+    }
+    const user = await this.userService.getUser({ id: req.currentUser.id });
+    user.password = md5(password);
+    await this.userService.saveUser(user);
+    return {};
+  }
 }
